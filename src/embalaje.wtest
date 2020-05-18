@@ -1,0 +1,14 @@
+import cosas.*
+import camion.*
+
+
+	test "no embalado" {
+		camion.cargar(knightRider)
+		assert.notThat(camion.puedeCircularEnRuta(5))
+	}
+	
+	test "embalado" {
+		embalaje.embalado(knightRider)
+		camion.cargar(embalaje)
+		assert.that(camion.puedeCircularEnRuta(5))
+	}

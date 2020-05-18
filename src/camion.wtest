@@ -1,0 +1,76 @@
+import camion.*
+import cosas.*
+import objetosDePrueba.*
+
+
+describe "camion" {
+	
+	fixture {
+		camion.cargar(knightRider)
+		camion.cargar(bumblebee)
+	}
+
+	test "peso total" {
+		assert.equals(2300, camion.pesoTotal())
+		camion.descargar(knightRider)
+		assert.equals(1800, camion.pesoTotal())
+	}
+
+	test "excedido peso" {
+		assert.notThat(camion.excedidoPeso())
+		camion.cargar(cosaPesada)
+		assert.that(camion.excedidoPeso())
+	}
+
+	test "puede circular en ruta" {
+		bumblebee.transformar()
+		assert.that(camion.puedeCircularEnRuta(20))
+		assert.notThat(camion.puedeCircularEnRuta(10))
+
+		camion.cargar(cosaPesada)
+		assert.notThat(camion.puedeCircularEnRuta(20))
+	}
+	
+	test "efecto De Carga" {
+		assert.notThat(cosaPesada.cargado())
+		camion.cargar(cosaPesada)
+		assert.that(cosaPesada.cargado())
+	}
+	
+	
+	test "puede transitar ruta 51" {
+		camion.descargar(bumblebee)
+	
+		const cuantosHay = camion.cosas().size()	
+		assert.that( camion.puedeTransitar(ruta51))
+		camion.transitar(ruta51)
+		assert.equals(cuantosHay - 1, camion.cosas().size())
+	
+	}
+	
+	test "no puede transitar ruta 51" {
+		//hacer algo para que no pueda
+		assert.notThat( camion.puedeTransitar(ruta51))
+		const cuantosHay = camion.cosas().size()	
+		assert.throwsException({camion.transitar(ruta51)})
+		assert.equals(cuantosHay , camion.cosas().size())
+	}
+	
+	test "puede transitar ruta 9" {
+		camion.cargar(objetoRecargable)
+		assert.that( camion.puedeTransitar(ruta9))
+		camion.transitar(ruta9)
+		assert.equals(2, objetoRecargable.vecesCargadas())
+	}
+	
+	test "no puede transitar ruta 9" {
+		camion.cargar(objetoRecargable)
+		camion.cargar(objetoMuyPeligroso)
+		assert.notThat( camion.puedeTransitar(ruta9))
+		assert.throwsException({camion.transitar(ruta9)})
+		assert.equals(1, objetoRecargable.vecesCargadas())
+	}
+	
+
+	
+}
